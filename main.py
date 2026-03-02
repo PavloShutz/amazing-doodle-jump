@@ -32,6 +32,21 @@ def load_image(name, colorkey=None, scale=1):
     return image, image.get_rect()
 
 
+class Doodler(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_image('lik-right.png')
+        self.turned_right = False
+        self.horizontal_velocity = 10
+    
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            self.rect.x += self.horizontal_velocity
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= self.horizontal_velocity
+
+
 class Platform(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -51,6 +66,8 @@ gap = 35
 for x in range(int(HEIGHT / (platform_height + gap))):
     platforms.add(Platform(0, x * gap))
 
+doodler = pygame.sprite.GroupSingle(Doodler())
+
 running = True
 while running:
     clock.tick(FPS)
@@ -60,8 +77,10 @@ while running:
             sys.exit()
     
     platforms.update()
+    doodler.update()
     
     screen.blit(bg_image, (0, 0))
     platforms.draw(screen)
+    doodler.draw(screen)
 
     pygame.display.flip()
