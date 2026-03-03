@@ -48,8 +48,15 @@ class Doodler(pygame.sprite.Sprite):
             self.rect.x += self.horizontal_velocity
         if keys[pygame.K_LEFT]:
             self.rect.x -= self.horizontal_velocity
+        self.keep_within_screen()
         self.vertical_velocity += self.gravity
         self.rect.y += self.vertical_velocity
+
+    def keep_within_screen(self):
+        if self.rect.x + self.rect.width <= 0:
+            self.rect.x = WIDTH
+        elif self.rect.x >= WIDTH:
+            self.rect.x = 0 - self.rect.width
     
     def jump(self):
         self.vertical_velocity = -self.jump_force
