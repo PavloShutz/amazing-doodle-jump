@@ -36,8 +36,11 @@ class Doodler(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image('lik-right.png')
-        self.turned_right = False
+        self.turned_right = True
         self.horizontal_velocity = 10
+        self.vertical_velocity = 0
+        self.gravity = 0.1
+        self.jump_force = 4.5
     
     def update(self):
         keys = pygame.key.get_pressed()
@@ -45,6 +48,11 @@ class Doodler(pygame.sprite.Sprite):
             self.rect.x += self.horizontal_velocity
         if keys[pygame.K_LEFT]:
             self.rect.x -= self.horizontal_velocity
+        self.vertical_velocity += self.gravity
+        self.rect.y += self.vertical_velocity
+    
+    def jump(self):
+        self.vertical_velocity = -self.jump_force
 
 
 class Platform(pygame.sprite.Sprite):
@@ -75,6 +83,13 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT and doodler.sprite.turned_right:
+                doodler.sprite.turned_right = False
+            if event.key == pygame.K_RIGHT and not doodler.sprite.turned_right:
+                doodler.sprite.turned_right = True
+            if event.key == pygame.K_SPACE:
+                doodler.sprite.jump()
     
     platforms.update()
     doodler.update()
